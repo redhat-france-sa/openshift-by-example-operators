@@ -1,0 +1,16 @@
+{{- if and .Values.mongodb.install .Values.mongodb.persistent }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: "{{ .Values.appName }}-mongodb"
+  labels:
+    app: "{{ .Values.appName }}"
+    container: mongodb
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mongodb.volumeSize }}
+{{- end }}

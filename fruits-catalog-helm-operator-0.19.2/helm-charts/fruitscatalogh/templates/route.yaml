@@ -1,0 +1,16 @@
+{{- if not .Values.webapp.ingress.enabled -}}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: "{{ .Values.appName }}"
+  labels:
+    app: "{{ .Values.appName }}"
+spec:
+  to:
+    name: "{{ .Values.appName }}-webapp"
+    kind: Service
+  port:
+    targetPort: 80
+  tls:
+    termination: edge
+{{- end }}

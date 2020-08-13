@@ -1,0 +1,148 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-webapp"
+  labels:
+    app: "{{ .Values.appName }}"
+    container: webapp
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.appName }}"
+      deploymentconfig: webapp
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.appName }}"
+        deploymentconfig: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: "{{ .Values.webapp.image }}"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities: {}
+          privileged: false
+        command:
+          - '/work/application'
+        args:
+          - "-Dquarkus.http.host=0.0.0.0"
+          - "-Dquarkus.mongodb.connection-string=mongodb://$(MONGODB_USER):$(MONGODB_PASSWORD)@{{ .Values.appName }}-mongodb:27017"
+        env:
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.appName }}-mongodb-connection"
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.appName }}-mongodb-connection"
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: http
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+{{- if and .Values.mongodb.install }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-mongodb"
+  labels:
+    app: "{{ .Values.appName }}"
+    container: mongodb
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.appName }}"
+      deploymentconfig: mongodb
+      container: mongodb
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.appName }}"
+        deploymentconfig: mongodb
+        container: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: {{ .Values.mongodb.image }}
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        readinessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 3
+          exec:
+            command:
+            - "/bin/sh"
+            - "-i"
+            - "-c"
+            - mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD
+              --eval="quit()"
+        livenessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 30
+          tcpSocket:
+            port: 27017
+        env:
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.appName }}-mongodb-connection"
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.appName }}-mongodb-connection"
+        - name: MONGODB_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: adminPassword
+              name: "{{ .Values.appName }}-mongodb-connection"
+        - name: MONGODB_DATABASE
+          value: "{{ .Values.appName }}"
+        resources:
+          limits:
+            memory: 512Mi
+        volumeMounts:
+        - name: "{{ .Values.appName }}-mongodb-data"
+          mountPath: "/var/lib/mongodb/data"
+        terminationMessagePath: "/dev/termination-log"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities: {}
+          privileged: false
+      volumes:
+      - name: "{{ .Values.appName }}-mongodb-data"
+        {{- if .Values.mongodb.persistent }}
+        persistentVolumeClaim:
+          claimName: "{{ .Values.appName }}-mongodb"
+        {{- else }}
+        emptyDir:
+          medium: ''
+        {{- end }}
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
+{{- end }}

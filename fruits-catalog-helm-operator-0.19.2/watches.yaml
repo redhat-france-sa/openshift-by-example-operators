@@ -1,0 +1,5 @@
+---
+- group: redhat.com
+  version: v1alpha1
+  kind: FruitsCatalogH
+  chart: helm-charts/fruitscatalogh
