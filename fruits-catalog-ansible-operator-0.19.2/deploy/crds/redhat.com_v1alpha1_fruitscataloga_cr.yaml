@@ -1,0 +1,9 @@
+apiVersion: redhat.com/v1alpha1
+kind: FruitsCatalogA
+metadata:
+  name: example-fruitscataloga
+spec:
+  # Add fields here
+  name: fruits-catalog-helm
+  webapp:
+    replicaCount: 1
