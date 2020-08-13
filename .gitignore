@@ -1,3 +1,13 @@
+# Development File #
+node/
+node_modules/
+dist/
+.idea
+.tmp
+.sass-cache
+bower_components/
+target/
+
 # Compiled class file
 *.class
 
