@@ -1,0 +1,10 @@
+domain: 
+layout: go.kubebuilder.io/v2
+repo: github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator
+resources:
+- group: redhat.com
+  kind: FruitsCatalogG
+  version: v1alpha1
+version: 3-alpha
+plugins:
+  go.operator-sdk.io/v2-alpha: {}

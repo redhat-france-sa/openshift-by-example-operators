@@ -1,0 +1,7 @@
+apiVersion: redhat.com/v1alpha1
+kind: FruitsCatalogG
+metadata:
+  name: fruitscatalogg-sample
+spec:
+  # Add fields here
+  foo: bar
