@@ -4,6 +4,6 @@ metadata:
   name: example-fruitscataloga
 spec:
   # Add fields here
-  name: fruits-catalog-helm
+  name: fruits-catalog-ansible
   webapp:
-    replicaCount: 1
+    replicaCount: 2

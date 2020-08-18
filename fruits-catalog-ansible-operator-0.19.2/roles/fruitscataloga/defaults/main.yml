@@ -3,7 +3,7 @@
 name: fruits-catalog-ansible
 
 webapp:
-  replicaCount: 1
+  replica_count: 1
   image: quay.io/lbroudoux/fruits-catalog:latest
   ingress:
     enabled: false

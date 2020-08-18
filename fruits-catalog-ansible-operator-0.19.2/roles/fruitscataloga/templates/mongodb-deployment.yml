@@ -6,13 +6,6 @@ metadata:
   labels:
     app: "{{name}}"
     container: mongodb
-    app.kubernetes.io/name: fruits-catalog-mongodb
-    app.kubernetes.io/instance: "fruits-catalog-mongodb-{{name}}"
-    app.kubernetes.io/component: mongodb
-    app.kubernetes.io/part-of: "{{name}}"
-    app.kubernetes.io/managed-by: fruits-catalog-ansible-operator
-    app.openshift.io/runtime: mongodb
-  creationTimestamp:
 spec:
   strategy:
     type: Recreate
