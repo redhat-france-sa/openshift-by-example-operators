@@ -2,15 +2,22 @@
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
+  annotations:
+    openshift.io/host.generated: 'true'
   name: "{{ .Values.appName }}"
   labels:
     app: "{{ .Values.appName }}"
+    app.kubernetes.io/managed-by: Helm
+    container: webapp
 spec:
   to:
     name: "{{ .Values.appName }}-webapp"
     kind: Service
+    weight: 100
   port:
-    targetPort: 80
+    targetPort: http
   tls:
     termination: edge
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None
 {{- end }}

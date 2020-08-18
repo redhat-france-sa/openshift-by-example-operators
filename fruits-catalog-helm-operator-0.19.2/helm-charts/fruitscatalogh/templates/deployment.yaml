@@ -28,7 +28,8 @@ spec:
           - '/work/application'
         args:
           - "-Dquarkus.http.host=0.0.0.0"
-          - "-Dquarkus.mongodb.connection-string=mongodb://$(MONGODB_USER):$(MONGODB_PASSWORD)@{{ .Values.appName }}-mongodb:27017"
+          - "-Dquarkus.mongodb.connection-string=mongodb://$(MONGODB_USER):$(MONGODB_PASSWORD)@{{ .Values.appName }}-mongodb:27017/{{ .Values.appName }}"
+          - "-Dquarkus.mongodb.database={{ .Values.appName }}"
         env:
         - name: MONGODB_USER
           valueFrom:
