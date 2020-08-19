@@ -1,17 +1,25 @@
 /*
+MIT License
 
+Copyright (c) 2020 RH France Solution Architects
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 */
 
 package deployment
@@ -19,6 +27,7 @@ package deployment
 import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	intstr "k8s.io/apimachinery/pkg/util/intstr"
 
@@ -33,7 +42,7 @@ func CreateSecretForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespac
 			APIVersion: "v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      spec.AppName + "-mongodb-connectio",
+			Name:      spec.AppName + "-mongodb-connection",
 			Namespace: namespace,
 			Labels: map[string]string{
 				"app":       spec.AppName,
@@ -48,6 +57,36 @@ func CreateSecretForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespac
 	}
 }
 
+// CreatePersistentVolumeClaimMongoDB initializes a new PerssitentVolumeClaim for MongoDB.
+func CreatePersistentVolumeClaimMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *corev1.PersistentVolumeClaim {
+	claim := &corev1.PersistentVolumeClaim{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PersistentVolumeClaim",
+			APIVersion: "v1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      spec.AppName + "-mongodb",
+			Namespace: namespace,
+			Labels: map[string]string{
+				"app":       spec.AppName,
+				"container": "mongodb",
+			},
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				corev1.ReadWriteOnce,
+			},
+			Resources: corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceName(corev1.ResourceStorage): resource.MustParse(spec.MongoDB.VolumeSize),
+				},
+			},
+		},
+	}
+
+	return claim
+}
+
 // CreateDeploymentForMongoDB initializes a new Deployment for MongoDB.
 func CreateDeploymentForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *appsv1.Deployment {
 	deployment := &appsv1.Deployment{
@@ -59,14 +98,19 @@ func CreateDeploymentForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, name
 			Name:      spec.AppName + "-mongodb",
 			Namespace: namespace,
 			Labels: map[string]string{
-				"app":       spec.AppName,
-				"container": "mongodb",
+				"app":              spec.AppName,
+				"deploymentconfig": "mongodb",
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
 			Strategy: appsv1.DeploymentStrategy{
 				Type: appsv1.RecreateDeploymentStrategyType,
 			},
+			Selector: &metav1.LabelSelector{MatchLabels: map[string]string{
+				"app":              spec.AppName,
+				"deploymentconfig": "mongodb",
+				"container":        "mongodb",
+			}},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
@@ -95,7 +139,7 @@ func CreateDeploymentForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, name
 											"/bin/sh",
 											"-i",
 											"-c",
-											"mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD --eval=quit()",
+											"mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD --eval=\"quit()\"",
 										},
 									},
 								},
@@ -122,7 +166,7 @@ func CreateDeploymentForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, name
 										SecretKeyRef: &corev1.SecretKeySelector{
 											Key: "username",
 											LocalObjectReference: corev1.LocalObjectReference{
-												Name: spec.AppName + "-mongodb",
+												Name: spec.AppName + "-mongodb-connection",
 											},
 										},
 									},

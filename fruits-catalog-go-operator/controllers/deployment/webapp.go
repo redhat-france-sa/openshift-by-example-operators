@@ -1,17 +1,25 @@
 /*
+MIT License
 
+Copyright (c) 2020 RH France Solution Architects
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 */
 
 package deployment
@@ -23,6 +31,8 @@ import (
 	intstr "k8s.io/apimachinery/pkg/util/intstr"
 
 	redhatcomv1alpha1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator/api/v1alpha1"
+
+	routev1 "github.com/openshift/api/route/v1"
 )
 
 // CreateDeploymentForWebapp initializes a new Deployment for Webapp.
@@ -64,7 +74,8 @@ func CreateDeploymentForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, names
 							},
 							Args: []string{
 								"-Dquarkus.http.host=0.0.0.0",
-								"-Dquarkus.mongodb.connection-string=mongodb://$(MONGODB_USER):$(MONGODB_PASSWORD)@" + spec.AppName + "-mongodb:27017",
+								"-Dquarkus.mongodb.connection-string=mongodb://$(MONGODB_USER):$(MONGODB_PASSWORD)@" + spec.AppName + "-mongodb:27017/" + spec.AppName,
+								"-Dquarkus.mongodb.database=" + spec.AppName,
 							},
 							Ports: []corev1.ContainerPort{
 								{
@@ -129,7 +140,7 @@ func CreateDeploymentForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, names
 	return deployment
 }
 
-// CreateServiceForWebapp initializes a new Service for MongoDB.
+// CreateServiceForWebapp initializes a new Service for WebApp.
 func CreateServiceForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *corev1.Service {
 	return &corev1.Service{
 		TypeMeta: metav1.TypeMeta{
@@ -137,7 +148,7 @@ func CreateServiceForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespac
 			APIVersion: "v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      spec.AppName + "-mongodb",
+			Name:      spec.AppName + "-webapp",
 			Namespace: namespace,
 			Labels: map[string]string{
 				"app":       spec.AppName,
@@ -147,7 +158,7 @@ func CreateServiceForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespac
 		Spec: corev1.ServiceSpec{
 			Ports: []corev1.ServicePort{
 				{
-					Name: "webapp",
+					Name: "http",
 					Port: 80,
 					TargetPort: intstr.IntOrString{
 						Type:   intstr.String,
@@ -162,6 +173,43 @@ func CreateServiceForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespac
 			},
 			Type:            corev1.ServiceTypeClusterIP,
 			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+
+// CreateRouteForWebapp initializes a new Route for WebApp.
+func CreateRouteForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *routev1.Route {
+	weight := int32(100)
+	return &routev1.Route{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Route",
+			APIVersion: "route.openshift.io/v1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      spec.AppName,
+			Namespace: namespace,
+			Labels: map[string]string{
+				"app":       spec.AppName,
+				"container": "webapp",
+			},
+		},
+		Spec: routev1.RouteSpec{
+			To: routev1.RouteTargetReference{
+				Name:   spec.AppName + "-webapp",
+				Kind:   "Service",
+				Weight: &weight,
+			},
+			Port: &routev1.RoutePort{
+				TargetPort: intstr.IntOrString{
+					Type:   intstr.String,
+					StrVal: "http",
+				},
+			},
+			TLS: &routev1.TLSConfig{
+				Termination:                   routev1.TLSTerminationEdge,
+				InsecureEdgeTerminationPolicy: routev1.InsecureEdgeTerminationPolicyNone,
+			},
+			WildcardPolicy: routev1.WildcardPolicyNone,
 		},
 	}
 }

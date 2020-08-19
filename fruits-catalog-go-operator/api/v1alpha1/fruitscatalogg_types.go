@@ -1,17 +1,25 @@
 /*
+MIT License
 
+Copyright (c) 2020 RH France Solution Architects
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 */
 
 package v1alpha1
@@ -28,7 +36,9 @@ type FruitsCatalogGSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	AppName string      `json:"appName,omitempty"`
+	// +kubebuilder:default:=fruits-catalog
+	AppName string `json:"appName,omitempty"`
+	// +kubebuilder:validation:Optional
 	WebApp  WebAppSpec  `json:"webapp,omitempty"`
 	MongoDB MongoDBSpec `json:"mongodb,omitempty"`
 }
@@ -36,29 +46,37 @@ type FruitsCatalogGSpec struct {
 // WebAppSpec defines the desired state of WebApp
 // +k8s:openapi-gen=true
 type WebAppSpec struct {
-	ReplicaCount int32       `json:"replicaCount,omitempty"`
-	Image        string      `json:"image,omitempty"`
-	Ingress      IngressSpec `json:"ingress,omitempty"`
+	ReplicaCount int32 `json:"replicaCount,omitempty"`
+	// +kubebuilder:default:="quay.io/lbroudoux/fruits-catalog:latest"
+	Image   string      `json:"image,omitempty"`
+	Ingress IngressSpec `json:"ingress,omitempty"`
 }
 
 // IngressSpec defines the desired state of WebApp Ingress
 // +k8s:openapi-gen=true
 type IngressSpec struct {
-	Enabled bool `json:"enabled,omitempty"`
+	// +kubebuilder:default:=true
+	Enabled bool `json:"enabled,omitempty" default:"true"`
 }
 
 // MongoDBSpec defines the desired state of MongoDB
 // +k8s:openapi-gen=true
 type MongoDBSpec struct {
-	Install    bool          `json:"install,omitempty"`
-	Image      string        `json:"image,omitempty"`
-	URI        string        `json:"uri,omitempty"`
-	Database   string        `json:"database,omitempty"`
-	Persistent bool          `json:"persistent,omitempty"`
-	VolumeSize string        `json:"volumeSize,omitempty"`
-	Username   string        `json:"username,omitempty"`
-	Password   string        `json:"password,omitempty"`
-	SecretRef  SecretRefSpec `json:"secretRef,omitempty"`
+	// +kubebuilder:default:=true
+	Install bool `json:"install,omitempty"`
+	// +kubebuilder:default:="centos/mongodb-34-centos7:latest"
+	Image    string `json:"image,omitempty"`
+	URI      string `json:"uri,omitempty"`
+	Database string `json:"database,omitempty"`
+	// +kubebuilder:default:=true
+	Persistent bool `json:"persistent,omitempty"`
+	// +kubebuilder:default:="2Gi"
+	VolumeSize string `json:"volumeSize,omitempty"`
+	// +kubebuilder:default:="myusername"
+	Username string `json:"username,omitempty"`
+	// +kubebuilder:default:="mypassword"
+	Password  string        `json:"password,omitempty"`
+	SecretRef SecretRefSpec `json:"secretRef,omitempty"`
 }
 
 // SecretRefSpec defines a reference to a Secret
@@ -73,6 +91,11 @@ type SecretRefSpec struct {
 type FruitsCatalogGStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	WebApp  string `json:"webapp"`
+	MongoDB string `json:"mongodb"`
+	Secret  string `json:"secret"`
+	Route   string `json:"route"`
 }
 
 // +kubebuilder:object:root=true
