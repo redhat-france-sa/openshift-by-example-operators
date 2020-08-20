@@ -1,0 +1,8 @@
+domain: com
+layout: helm.sdk.operatorframework.io/v1
+projectName: fruits-catalog-helm-operator
+resources:
+- group: redhat
+  kind: FruitsCatalogH1
+  version: v1beta1
+version: 3-alpha

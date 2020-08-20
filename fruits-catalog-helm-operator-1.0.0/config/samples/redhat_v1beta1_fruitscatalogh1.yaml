@@ -1,0 +1,11 @@
+apiVersion: redhat.com/v1beta1
+kind: FruitsCatalogH1
+metadata:
+  name: fruitscatalogh1-sample
+spec:
+  # Default values copied from <project_dir>/helm-charts/fruitscatalogh1/values.yaml
+  appName: fruits-catalog-helm
+  webapp:
+    replicaCount: 1
+  
+  

@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.appName }}-webapp"
+  labels:
+    app: "{{ .Values.appName }}"
+    container: webapp
+spec:
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: "{{ .Values.appName }}"
+    deploymentconfig: webapp
+  type: ClusterIP
+  sessionAffinity: None
+{{- if and .Values.mongodb.install }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: "{{ .Values.appName }}-mongodb"
+  labels:
+    app: "{{ .Values.appName }}"
+    container: mongodb
+spec:
+  ports:
+  - name: mongodb
+    protocol: TCP
+    port: 27017
+    targetPort: 27017
+    nodePort: 0
+  selector:
+    app: "{{ .Values.appName }}"
+    container: mongodb
+  type: ClusterIP
+  sessionAffinity: None
+{{- end }}

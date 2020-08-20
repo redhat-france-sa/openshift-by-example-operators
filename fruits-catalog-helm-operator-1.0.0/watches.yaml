@@ -1,0 +1,6 @@
+# Use the 'create api' subcommand to add watches to this file.
+- group: redhat.com
+  version: v1beta1
+  kind: FruitsCatalogH1
+  chart: helm-charts/fruitscatalogh1
+# +kubebuilder:scaffold:watch
