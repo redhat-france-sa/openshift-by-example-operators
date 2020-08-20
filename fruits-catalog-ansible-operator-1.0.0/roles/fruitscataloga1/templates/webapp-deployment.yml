@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{name}}-webapp"
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: webapp
+spec:
+  replicas: {{webapp.replica_count}}
+  selector:
+    matchLabels:
+      app: "{{name}}"
+      deploymentconfig: webapp
+  template:
+    metadata:
+      labels:
+        app: "{{name}}"
+        deploymentconfig: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: "{{webapp.image}}"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities: {}
+          privileged: false
+        command:
+          - '/work/application'
+        args:
+          - "-Dquarkus.http.host=0.0.0.0"
+          - "-Dquarkus.mongodb.connection-string=mongodb://$(MONGODB_USER):$(MONGODB_PASSWORD)@{{name}}-mongodb:27017/{{name}}"
+          - "-Dquarkus.mongodb.database={{name}}"
+        env:
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{name}}-mongodb-connection"
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{name}}-mongodb-connection"
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: http
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi

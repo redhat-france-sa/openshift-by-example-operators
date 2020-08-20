@@ -1,0 +1,9 @@
+apiVersion: redhat.com/v1beta1
+kind: FruitsCatalogA1
+metadata:
+  name: example-fruitscataloga
+spec:
+  # Add fields here
+  name: fruits-catalog-ansible
+  webapp:
+    replicaCount: 2

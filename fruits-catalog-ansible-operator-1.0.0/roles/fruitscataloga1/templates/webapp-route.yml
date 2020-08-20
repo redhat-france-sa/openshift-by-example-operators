@@ -1,0 +1,22 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  annotations:
+    openshift.io/host.generated: 'true'
+  name: "{{name}}"
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    app.kubernetes.io/managed-by: Helm
+    container: webapp
+spec:
+  to:
+    name: "{{name}}-webapp"
+    kind: Service
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None

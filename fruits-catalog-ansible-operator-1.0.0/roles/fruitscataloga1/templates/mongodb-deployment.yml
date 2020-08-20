@@ -1,0 +1,83 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: "{{name}}-mongodb"
+  namespace: '{{ ansible_operator_meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: mongodb
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector: 
+    matchLabels:  
+      app: "{{name}}"
+      deploymentconfig: mongodb
+      container: mongodb
+  template:
+    metadata:
+      labels:
+        app: "{{name}}"
+        deploymentconfig: mongodb
+        container: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: "{{mongodb.image}}"
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        readinessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 3
+          exec:
+            command:
+            - "/bin/sh"
+            - "-i"
+            - "-c"
+            - mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD
+              --eval="quit()"
+        livenessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 30
+          tcpSocket:
+            port: 27017
+        env:
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{name}}-mongodb-connection"
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{name}}-mongodb-connection"
+        - name: MONGODB_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: adminPassword
+              name: "{{name}}-mongodb-connection"
+        - name: MONGODB_DATABASE
+          value: "{{name}}"
+        resources:
+          limits:
+            memory: 512Mi
+        volumeMounts:
+        - name: "{{name}}-mongodb-data"
+          mountPath: "/var/lib/mongodb/data"
+        terminationMessagePath: "/dev/termination-log"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities: {}
+          privileged: false
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
+      volumes:
+      - name: "{{name}}-mongodb-data"
+        {% if mongodb.persistent %}persistentVolumeClaim:
+          claimName: "{{name}}-mongodb"
+        {% else %}emptyDir:
+          medium: ''
+        {% endif %}
