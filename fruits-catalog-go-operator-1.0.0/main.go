@@ -27,8 +27,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	redhatcomv1alpha1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-0.19.2/api/v1alpha1"
-	"github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-0.19.2/controllers"
+	redhatv1beta1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-1.0.0/api/v1beta1"
+	"github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-1.0.0/controllers"
 
 	routev1 "github.com/openshift/api/route/v1"
 	// +kubebuilder:scaffold:imports
@@ -42,7 +42,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(redhatcomv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(redhatv1beta1.AddToScheme(scheme))
 	utilruntime.Must(routev1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
@@ -63,19 +63,19 @@ func main() {
 		MetricsBindAddress: metricsAddr,
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "c3a8b0b5.redhat.com",
+		LeaderElectionID:   "523b08eb.com",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
 
-	if err = (&controllers.FruitsCatalogGReconciler{
+	if err = (&controllers.FruitsCatalogG1Reconciler{
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("FruitsCatalogG"),
+		Log:    ctrl.Log.WithName("controllers").WithName("FruitsCatalogG1"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "FruitsCatalogG")
+		setupLog.Error(err, "unable to create controller", "controller", "FruitsCatalogG1")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

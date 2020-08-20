@@ -31,6 +31,7 @@ import (
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/discovery"
@@ -39,37 +40,36 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	redhatcomv1alpha1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator/api/v1alpha1"
-	deployment "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator/controllers/deployment"
+	redhatv1beta1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-1.0.0/api/v1beta1"
+	deployment "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-1.0.0/controllers/deployment"
 
-	"k8s.io/apimachinery/pkg/api/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
-// FruitsCatalogGReconciler reconciles a FruitsCatalogG object
-type FruitsCatalogGReconciler struct {
+// FruitsCatalogG1Reconciler reconciles a FruitsCatalogG1 object
+type FruitsCatalogG1Reconciler struct {
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=redhat.com,resources=fruitscataloggs,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=redhat.com,resources=fruitscataloggs/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=redhat.com,resources=fruitscatalogg1s,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=redhat.com,resources=fruitscatalogg1s/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=core,resources=secrets;services;persistentvolumeclaims,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups='',resources=deployments/finalizers,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=route.openshift.io,resources=routes,verbs=get;list;watch;create;update;patch;delete
 
-// Reconcile reads that state of the cluster for a FruitsCatalogG object and makes changes based on the state read
-// and what is in the FruitsCatalogGSpec.
-func (r *FruitsCatalogGReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+// Reconcile reads that state of the cluster for a FruitsCatalogG1 object and makes changes based on the state read
+// and what is in the FruitsCatalogG1Spec.
+func (r *FruitsCatalogG1Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	//ctx := context.Background()
 	reqLogger := r.Log.WithValues("fruitscatalogg", req.NamespacedName)
 
 	// your logic here
 	reqLogger.Info("Starting reconcile loop for " + req.NamespacedName.Name)
 	// Fetch the  FruitsCatalogG instance of this reconcile request.
-	instance := &redhatcomv1alpha1.FruitsCatalogG{}
+	instance := &redhatv1beta1.FruitsCatalogG1{}
 	err := r.Get(context.TODO(), req.NamespacedName, instance)
 	if err != nil {
 		if apierrors.IsNotFound(err) {
@@ -207,6 +207,7 @@ func (r *FruitsCatalogGReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		} else {
 			reqLogger.Info("Cannot retrieve a DiscoveryClient, assuming we're on Vanilla Kubernetes")
 		}
+
 	}
 	// Create a Route if we're on OpenShift ;-)
 	if isOpenShift {
@@ -233,21 +234,19 @@ func (r *FruitsCatalogGReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	// the status of our resources without increasing the ResourceGeneration metadata field.
 	r.Status().Update(context.Background(), instance)
 
-	// end of logic block
-
 	return ctrl.Result{}, nil
 }
 
 // SetupWithManager takes care of controller initialization with Manager.
-func (r *FruitsCatalogGReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *FruitsCatalogG1Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&redhatcomv1alpha1.FruitsCatalogG{}).
+		For(&redhatv1beta1.FruitsCatalogG1{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.Service{}).
 		Complete(r)
 }
 
-func (r *FruitsCatalogGReconciler) finalizeFruitsCatalogG(reqLogger logr.Logger, m *redhatcomv1alpha1.FruitsCatalogG) error {
+func (r *FruitsCatalogG1Reconciler) finalizeFruitsCatalogG(reqLogger logr.Logger, m *redhatv1beta1.FruitsCatalogG1) error {
 	// TODO(user): Add the cleanup steps that the operator needs to do before the CR
 	// can be deleted. Examples of finalizers include performing backups and deleting
 	// resources that are not owned by this CR, like a PVC.
@@ -255,7 +254,7 @@ func (r *FruitsCatalogGReconciler) finalizeFruitsCatalogG(reqLogger logr.Logger,
 	return nil
 }
 
-func (r *FruitsCatalogGReconciler) addFinalizer(reqLogger logr.Logger, m *redhatcomv1alpha1.FruitsCatalogG) error {
+func (r *FruitsCatalogG1Reconciler) addFinalizer(reqLogger logr.Logger, m *redhatv1beta1.FruitsCatalogG1) error {
 	reqLogger.Info("Adding Finalizer for the FruitsCatalogG")
 	controllerutil.AddFinalizer(m, "finalizer.fruitscatalogg.redhat.com")
 

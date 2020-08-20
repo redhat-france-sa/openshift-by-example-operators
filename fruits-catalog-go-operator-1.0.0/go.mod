@@ -1,4 +1,4 @@
-module github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-0.19.2
+module github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-1.0.0
 
 go 1.13
 

@@ -30,13 +30,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	intstr "k8s.io/apimachinery/pkg/util/intstr"
 
-	redhatcomv1alpha1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-0.19.2/api/v1alpha1"
+	redhatcomv1beta1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-1.0.0/api/v1beta1"
 
 	routev1 "github.com/openshift/api/route/v1"
 )
 
 // CreateDeploymentForWebapp initializes a new Deployment for Webapp.
-func CreateDeploymentForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *appsv1.Deployment {
+func CreateDeploymentForWebapp(spec *redhatcomv1beta1.FruitsCatalogG1Spec, namespace string) *appsv1.Deployment {
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Deployment",
@@ -141,7 +141,7 @@ func CreateDeploymentForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, names
 }
 
 // CreateServiceForWebapp initializes a new Service for WebApp.
-func CreateServiceForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *corev1.Service {
+func CreateServiceForWebapp(spec *redhatcomv1beta1.FruitsCatalogG1Spec, namespace string) *corev1.Service {
 	return &corev1.Service{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Service",
@@ -178,7 +178,7 @@ func CreateServiceForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespac
 }
 
 // CreateRouteForWebapp initializes a new Route for WebApp.
-func CreateRouteForWebapp(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *routev1.Route {
+func CreateRouteForWebapp(spec *redhatcomv1beta1.FruitsCatalogG1Spec, namespace string) *routev1.Route {
 	weight := int32(100)
 	return &routev1.Route{
 		TypeMeta: metav1.TypeMeta{

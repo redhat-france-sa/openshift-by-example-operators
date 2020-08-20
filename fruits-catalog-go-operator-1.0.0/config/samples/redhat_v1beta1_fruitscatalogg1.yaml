@@ -1,0 +1,11 @@
+apiVersion: redhat.com/v1beta1
+kind: FruitsCatalogG1
+metadata:
+  name: example-fruitscatalogg
+spec:
+  # Add fields here
+  appName: fruits-catalog-go
+  webapp:
+    replicaCount: 2
+  mongodb:
+    install: true

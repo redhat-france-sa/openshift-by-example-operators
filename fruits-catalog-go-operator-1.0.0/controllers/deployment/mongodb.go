@@ -31,11 +31,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	intstr "k8s.io/apimachinery/pkg/util/intstr"
 
-	redhatcomv1alpha1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-0.19.2/api/v1alpha1"
+	redhatcomv1beta1 "github.com/redhat-france-sa/openshift-by-example-operators/fruits-catalog-go-operator-1.0.0/api/v1beta1"
 )
 
 // CreateSecretForMongoDB initializes a new Secret for holding connection username and password.
-func CreateSecretForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *corev1.Secret {
+func CreateSecretForMongoDB(spec *redhatcomv1beta1.FruitsCatalogG1Spec, namespace string) *corev1.Secret {
 	return &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Secret",
@@ -58,7 +58,7 @@ func CreateSecretForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespac
 }
 
 // CreatePersistentVolumeClaimMongoDB initializes a new PerssitentVolumeClaim for MongoDB.
-func CreatePersistentVolumeClaimMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *corev1.PersistentVolumeClaim {
+func CreatePersistentVolumeClaimMongoDB(spec *redhatcomv1beta1.FruitsCatalogG1Spec, namespace string) *corev1.PersistentVolumeClaim {
 	claim := &corev1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PersistentVolumeClaim",
@@ -88,7 +88,7 @@ func CreatePersistentVolumeClaimMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSp
 }
 
 // CreateDeploymentForMongoDB initializes a new Deployment for MongoDB.
-func CreateDeploymentForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *appsv1.Deployment {
+func CreateDeploymentForMongoDB(spec *redhatcomv1beta1.FruitsCatalogG1Spec, namespace string) *appsv1.Deployment {
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Deployment",
@@ -239,7 +239,7 @@ func CreateDeploymentForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, name
 }
 
 // CreateServiceForMongoDB initializes a new Service for MongoDB.
-func CreateServiceForMongoDB(spec *redhatcomv1alpha1.FruitsCatalogGSpec, namespace string) *corev1.Service {
+func CreateServiceForMongoDB(spec *redhatcomv1beta1.FruitsCatalogG1Spec, namespace string) *corev1.Service {
 	return &corev1.Service{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Service",
