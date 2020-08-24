@@ -36,6 +36,7 @@ rules:
   resources:
   - fruitscatalogh1s
   - fruitscatalogh1s/status
+  - fruitscatalogh1s/finalizers
   verbs:
   - create
   - delete

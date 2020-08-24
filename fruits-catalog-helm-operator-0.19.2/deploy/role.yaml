@@ -75,6 +75,8 @@ rules:
   - redhat.com
   resources:
   - '*'
+  - fruitscataloghs/status
+  - fruitscataloghs/finalizers
   verbs:
   - create
   - delete
