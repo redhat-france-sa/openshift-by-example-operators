@@ -27,12 +27,13 @@ spec:
         args:
         - "--enable-leader-election"
         - "--leader-election-id=fruits-catalog-helm-operator"
+        - "--max-concurrent-reconciles=4"
         name: manager
         resources:
           limits:
-            cpu: 100m
-            memory: 90Mi
+            cpu: 150m
+            memory: 250Mi
           requests:
-            cpu: 100m
-            memory: 60Mi
+            cpu: 150m
+            memory: 150Mi
       terminationGracePeriodSeconds: 10
