@@ -55,6 +55,7 @@ type FruitsCatalogG1Reconciler struct {
 
 // +kubebuilder:rbac:groups=redhat.com,resources=fruitscatalogg1s,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=redhat.com,resources=fruitscatalogg1s/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=redhat.com,resources=fruitscatalogg1s/finalizers,verbs=get;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=secrets;services;persistentvolumeclaims,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups='',resources=deployments/finalizers,verbs=get;list;watch;create;update;patch;delete

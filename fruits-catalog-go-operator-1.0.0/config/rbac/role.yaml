@@ -59,6 +59,16 @@ rules:
 - apiGroups:
   - redhat.com
   resources:
+  - fruitscatalogg1s/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - redhat.com
+  resources:
   - fruitscatalogg1s/status
   verbs:
   - get
