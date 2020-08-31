@@ -1,6 +1,16 @@
 ---
 # tasks file for fruitscataloga1
 
+- name: Load default values from defaults/main.yml
+  include_vars:
+    file: ../defaults/main.yml
+    name: default_cr
+
+- name: Complete CR with default values
+  set_fact:
+    webapp_full: "{{ default_cr.webapp|combine(webapp, recursive=True) }}"
+    mongodb_full: "{{ default_cr.mongodb|combine(mongodb, recursive=True) }}"
+
 - name: Get information about the cluster
   set_fact:
     api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
@@ -10,7 +20,7 @@
 # ================================================================
 
 - name: Get an existing MongoDB Secret
-  when: mongodb.secret_ref is not defined
+  when: mongodb_full.secret_ref is not defined
   k8s_facts:
     api_version: v1
     kind: Secret
@@ -26,22 +36,22 @@
     definition: "{{ lookup('template', 'mongodb-secret.yml') | from_yaml  }}"
 
 - name: The MongoDB PVC is present
-  when: mongodb.install|bool and mongodb.persistent|bool
+  when: mongodb_full.install|bool and mongodb_full.persistent|bool
   k8s:
     state: present
     force: False
     definition: "{{ lookup('template', 'mongodb-pvc.yml') | from_yaml  }}"
 
-- name: The MongoDB Deployment is present if mongodb.install == true
-  when: mongodb.install|bool
+- name: The MongoDB Deployment is present if mongodb_full.install == true
+  when: mongodb_full.install|bool
   k8s:
-    state: "{{ 'present' if mongodb.install|bool else 'absent' }}"
+    state: "{{ 'present' if mongodb_full.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'mongodb-deployment.yml') | from_yaml  }}"
 
-- name: The MongoDB Service is present if mongodb.install == true
-  when: mongodb.install|bool
+- name: The MongoDB Service is present if mongodb_full.install == true
+  when: mongodb_full.install|bool
   k8s:
-    state: "{{ 'present' if mongodb.install|bool else 'absent' }}"
+    state: "{{ 'present' if mongodb_full.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'mongodb-service.yml') | from_yaml  }}"
 
 # ================================================================

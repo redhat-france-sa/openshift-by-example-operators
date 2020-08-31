@@ -1,0 +1,46 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+    operators.operatorframework.io/builder: operator-sdk-v1.0.0
+    operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
+  name: fruits-catalog-ansible-operator.vX.Y.Z
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions: {}
+  description: Operator for the FruitsCatalog app using Operator Ansible SDK 1.0.0
+  displayName: fruits-catalog-ansible-operator-1.0.0
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - sample
+  - operator-sdk
+  - fruits-catalog
+  links:
+  - name: Fruits Catalog Ansible Operator
+    url: https://fruits-catalog-ansible-operator.domain
+  maintainers:
+  - email: laurent.broudoux@redhat.com
+    name: lbroudoux
+  maturity: alpha
+  provider:
+    name: Laurent Broudoux
+    url: https://github.com/redhat-france-sa/openshift-by-example-operators
+  version: 0.0.0

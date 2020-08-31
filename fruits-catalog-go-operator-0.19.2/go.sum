@@ -249,6 +249,7 @@ github.com/prometheus/procfs v0.0.2/go.mod h1:TjEm7ze935MbeOT/UhFTIMYKhuLP4wbCsT
 github.com/redhat-france-sa/openshift-by-example-operators v0.0.0-20200813152000-315d16589e52 h1:eqqMBYRaaPQT0OTu2OHA8c6JwM5SDkkki5neJCe9RK8=
 github.com/redhat-france-sa/openshift-by-example-operators v0.0.0-20200820115524-c48e3189393a h1:FPxuWxp+WWb72J62AJ/e0pHiEncgK+TWjBoZCmtbLXU=
 github.com/redhat-france-sa/openshift-by-example-operators v0.0.0-20200825115312-d481937ff981 h1:M/DezB62rVU1otTaPSs7EcIaopGHc/ctkZt0//P0Oio=
+github.com/redhat-france-sa/openshift-by-example-operators v0.0.0-20200825151417-589c137b32a2 h1:5/5ysyiJNVYfepBsrszBGYo+XsQMn5G6OYGbVGGM01I=
 github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6SoW27p1b0cqNHllgS5HIMJraePCO15w5zCzIWYg=
 github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=

@@ -22,4 +22,4 @@ mongodb:
   install: true
   image: centos/mongodb-34-centos7:latest
   persistent: true
-  volume_size: 2Gi
+  volume_size: 3Gi

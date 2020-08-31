@@ -1,0 +1,15 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorSource
+metadata:
+  name: fruits-catalog-operators
+  finalizers:
+    - finalizer.operatorsources.operators.coreos.com
+  labels:
+    opsrc-provider: fruits-catalog-team
+spec:
+  authorizationToken: {}
+  displayName: Fruits Catalog Operators
+  endpoint: 'https://quay.io/cnr'
+  publisher: Fruits Catalog Team
+  registryNamespace: fruits-catalog-operators
+  type: appregistry

@@ -7,7 +7,7 @@ metadata:
     app: "{{name}}"
     container: webapp
 spec:
-  replicas: {{webapp.replica_count}}
+  replicas: {{webapp_full.replica_count}}
   selector:
     matchLabels:
       app: "{{name}}"
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: "{{webapp.image}}"
+        image: "{{webapp_full.image}}"
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities: {}

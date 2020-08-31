@@ -1,0 +1,9 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: fruits-catalog-operators
+spec:
+  sourceType: grpc
+  image: quay.io/lbroudoux/fruits-catalog-operators-registry:1.0.0
+  displayName: Fruits Catalog Operators
+  publisher: Fruits Catalog Team

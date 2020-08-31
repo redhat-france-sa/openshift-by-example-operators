@@ -1,0 +1,6 @@
+packageName: fruits-catalog-ansible-operator
+operator
+channels:
+- name: beta
+  currentCSV: fruits-catalog-ansible-operator.v0.0.1
+defaultChannel: beta

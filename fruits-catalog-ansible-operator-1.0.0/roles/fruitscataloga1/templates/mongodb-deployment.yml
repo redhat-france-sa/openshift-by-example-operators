@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: "{{mongodb.image}}"
+        image: "{{mongodb_full.image}}"
         ports:
         - containerPort: 27017
           protocol: TCP
