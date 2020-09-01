@@ -1,5 +1,15 @@
 # openshift-by-example-operators
 
+## What is it?
+
+This is a companion project to [`openshift-by-example`](https://github.com/redhat-france-sa/openshift-by-example) and the associated article that now tackle the topic of Operators development and packaging using tools and practices from the [Operator Framework](https://operatorframework.io).
+
+![Operator SDK](https://master.sdk.operatorframework.io/build/images/logo.svg)
+
+More precisely, this repository contains samples on how to develop Operators using the [Operator SDK](https://sdk.operatorframework.io) and the 3 different technologies embedded: Helm, Ansible and Go language. We hope it will help you understand the pro and cons fo different approach and how they can map on the Operators Maturity Model phases.
+
+![Operators Maturity Model](./assets/operators-maturity-model.png)
+
 ## Pre-requisites
 
 * `operator-sdk` should be installed and present into your `$PATH`. We use latest `1.0.0` version and previous `0.19.2`version. Just check https://master.sdk.operatorframework.io/docs/installation/install-operator-sdk/ on how to install it,
@@ -9,67 +19,10 @@
 
 ## Helm Operator
 
-### operator-sdk 1.0.0
-
-Start creating a new directory and initializing a new helm operator project in it:
-```
-$ mkdir fruits-catalog-helm-operator && cd fruits-catalog-helm-operator
-$ operator-sdk init --plugins=helm --domain=com --group=redhat --version v1beta1 --kind FruitsCatalogH1
-```
-
-#### Completing the operator code
-
-* Edit the `helm-charts/fruitscatalogh1/values.yaml` to reflect your custom resource default values,
-* Edit all the resources within `helm-charts/fruitscatalogh1/templates` resources accordingly,
-* Adapt the required permsissions within `config/rbac/role.yaml`
-
-#### Building and packaging the operator
-
-Before launching `make docker-build docker-push`, export a `$IMG` variable customized to your own repository:
-```
-$ export IMG=quay.io/lbroudoux/fruits-catalog-helm-operator:0.0.2
-$ make docker-build docker-push IMG=$IMG
-```
-
-#### Installing the operator
-
-Now, connected to the Kubernetes cluster, install the CRD within cluster:
-```
-$ make install
-[...]
-customresourcedefinition.apiextensions.k8s.io/fruitscataloghs.redhat.com configured
-```
-
-And deploy the operator image and manifests into the default namespace that will be `fruits-catalog-helm-operator-system`:
-```
-$ make deploy IMG=$IMG
-[...]
-deployment.apps/fruits-catalog-helm-operator-controller-manager created
-```
-
-#### Testing the operator on cluster
-
-```
-$ kubectl create ns fruits-catalog-helm-1
-$ kubectl apply -f config/samples/redhat_v1beta1_fruitscatalogh1.yaml -n fruits-catalog-helm-1
-```
-
-> Does not work! Why ? Normal ;-) 
-
-```
-$ kubectl apply -f config/samples/redhat_v1beta1_fruitscatalogh1-username+password.yaml -n fruits-catalog-helm-1
-```
-
-### operator-sdk 0.19.2
-
 ## Ansible Operator
-
-### operator-sdk 1.0.0
-
-### operator-sdk 0.19.2
 
 ## Go Operator
 
-### operator-sdk 1.0.0
+## OLM manifests, Scorecard and OCI Bundles
 
-### operator-sdk 0.19.2
+## Operators Registry and Catalog
