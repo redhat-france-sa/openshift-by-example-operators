@@ -6,7 +6,7 @@ This is a companion project to [`openshift-by-example`](https://github.com/redha
 
 ![Operator SDK](https://master.sdk.operatorframework.io/build/images/logo.svg)
 
-More precisely, this repository contains samples on how to develop Operators using the [Operator SDK](https://sdk.operatorframework.io) and the 3 different technologies embedded: [Helm](#Helm Operator), [Ansible](#Ansible Operator) and [Go language](#Go Operator). We hope it will help you understand the pro and cons fo different approach and how they can map on the Operators Maturity Model phases.
+More precisely, this repository contains samples on how to develop Operators using the [Operator SDK](https://sdk.operatorframework.io) and the 3 different technologies embedded: [Helm](#helm-operator), [Ansible](#ansible-operator) and [Go language](#go-perator). We hope it will help you understand the pro and cons of different approaches and how they can map on the Operators Maturity Model phases.
 
 ![Operators Maturity Model](./assets/operators-maturity-model.png)
 
@@ -19,9 +19,29 @@ More precisely, this repository contains samples on how to develop Operators usi
 
 ## Helm Operator
 
+Operator SDK allows creating Operator using/re-using [Helm Charts](https://helm.sh). Whilst they're great starting points, we tend to think that Helm only allows you to support the first phases of the maturity model.
+
+Discover how to develop such Operator on the [dedicated Helm page](HELM.md).
+
+| Pros                     | Cons                     |
+| ------------------------ | ------------------------ |
+| | |
+
 ## Ansible Operator
 
+Discover how to develop such Operator on the [dedicated Ansible page](ANSIBLE.md).
+
+| Pros                     | Cons                     |
+| ------------------------ | ------------------------ |
+| | |
+
 ## Go Operator
+
+Discover how to develop such Operator on the [dedicated Go page](GO.md).
+
+| Pros                     | Cons                     |
+| ------------------------ | ------------------------ |
+| | |
 
 ## OLM manifests, Scorecard and OCI Bundles
 
