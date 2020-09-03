@@ -4,8 +4,6 @@
 
 This is a companion project to [`openshift-by-example`](https://github.com/redhat-france-sa/openshift-by-example) and the associated article that now tackle the topic of Operators development and packaging using tools and practices from the [Operator Framework](https://operatorframework.io).
 
-![Operator SDK](https://master.sdk.operatorframework.io/build/images/logo.svg)
-
 <div style="background: #aaaaaa; padding: 15px">
     <img src="https://master.sdk.operatorframework.io/build/images/logo.svg" height="140">
 </div>
@@ -16,7 +14,11 @@ More precisely, this repository contains samples on how to develop Operators usi
 
 ## The fruits-catalog application
 
-The operators we have developed here
+The operators we have developed here are made to deploy the `fruits-catalog` application we usually use. This application is made of 2 components:
+* A WebApp component made using [Quarkus](https://quarkus.io). You can find the code within the [`fruits-catalog/`](./fruits-catalog) folder,
+* A MongoDB database.
+
+The container image for the WebApp part of the application was made available as `quay.io/lbroudoux/fruits-catalog:latest`.
 
 ## Pre-requisites
 
