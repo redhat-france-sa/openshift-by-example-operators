@@ -27,16 +27,16 @@ Initiaze the following structure within `roles/` folder:
 
 ```
 /roles
-	/fruitscataloga1
-      /defaults
-			main.yml
-		/tasks
-			main.yml
-		/templates
-			...
+  /fruitscataloga1
+    /defaults
+      main.yml
+    /tasks
+      main.yml
+    /templates
+      ...
 ```
 
-Edit the `watches.yaml` to replace the `FIXME` with a reference to our new role. Check the completed resources within the `fruits-catalog-ansible-operator-1.0.0` folder of this Git repository.
+Edit the `watches.yaml` to replace the `FIXME` with a reference to our new role. Check the completed resources within the [`fruits-catalog-ansible-operator-1.0.0`](./fruits-catalog-ansible-operator-1.0.0) folder of this Git repository.
 
 #### Testing in local
 
@@ -114,7 +114,7 @@ $ operator-sdk new fruits-catalog-ansible-operator --api-version=redhat.com/v1al
 
 ### Competing the operator code
 
-Check the completed resources within the `fruits-catalog-ansible-operator-0.19.2` folder of this Git repository.
+Check the completed resources within the [`fruits-catalog-ansible-operator-0.19.2`](./fruits-catalog-ansible-operator-0.19.2) folder of this Git repository.
 
 #### Testing in local
 

@@ -26,7 +26,7 @@ Check the noticeable resources within the scafolded project:
 * Edit all the resources within `helm-charts/fruitscatalogh1/templates` resources accordingly,
 * Adapt the required permsissions within `config/rbac/role.yaml`
 
-Check the completed resources within the `fruits-catalog-helm-operator-1.0.0` folder of this Git repository.
+Check the completed resources within the [`fruits-catalog-helm-operator-1.0.0`](./fruits-catalog-helm-operator-1.0.0) folder of this Git repository.
 
 #### Building and packaging the operator
 
@@ -85,7 +85,7 @@ $ operator-sdk new fruits-catalog-helm-operator --api-version=redhat.com/v1alpha
 
 ### Competing the operator code
 
-Check the completed resources within the `fruits-catalog-helm-operator-0.19.2` folder of this Git repository.
+Check the completed resources within the [`fruits-catalog-helm-operator-0.19.2`](./fruits-catalog-helm-operator-0.19.2) folder of this Git repository.
 
 #### Building and packaging the operator
 
