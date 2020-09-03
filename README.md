@@ -6,6 +6,10 @@ This is a companion project to [`openshift-by-example`](https://github.com/redha
 
 ![Operator SDK](https://master.sdk.operatorframework.io/build/images/logo.svg)
 
+<div style="background: #aaaaaa; padding: 15px">
+    <img src="https://master.sdk.operatorframework.io/build/images/logo.svg" height="140">
+</div>
+
 More precisely, this repository contains samples on how to develop Operators using the [Operator SDK](https://sdk.operatorframework.io) and the 3 different technologies embedded: [Helm](#helm-operator), [Ansible](#ansible-operator) and [Go language](#go-perator). We hope it will help you understand the pro and cons of different approaches and how they can map on the Operators Maturity Model phases.
 
 ![Operators Maturity Model](./assets/operators-maturity-model.png)
@@ -29,7 +33,9 @@ Discover how to develop such Operator on the [dedicated Helm page](HELM.md).
 
 | Pros                     | Cons                     |
 | ------------------------ | ------------------------ |
-| | |
+| Templating and basic controls (`if`) | Unable to discover cluster capabilities |
+| Simplicity | Custom Resource is not typed |
+| Great to start with | YAML hell ;-) |
 
 ## Ansible Operator
 
@@ -37,7 +43,11 @@ Discover how to develop such Operator on the [dedicated Ansible page](ANSIBLE.md
 
 | Pros                     | Cons                     |
 | ------------------------ | ------------------------ |
-| | |
+| Templating + Control flow structures | Role or Playbook is fully evaluated at each reconciliation |
+| Ability to discover cluster capabilities | Custom Resource is not typed | 
+| Hybrid Operators: in and out the cluster | YAML hell ;-) |
+| Development loop and CI/CD with modelcule | |
+| Huge Ansible ecosystem for any equipment, device, stack, ... | |
 
 ## Go Operator
 
@@ -45,7 +55,12 @@ Discover how to develop such Operator on the [dedicated Go page](GO.md).
 
 | Pros                     | Cons                     |
 | ------------------------ | ------------------------ |
-| | |
+| Go is full language | Complex Kube resources created with Go APIs are verbose |
+| Ability to access and leverage Kubernetes API (discovery, types, schemes, ...) | Personal note: coming from Java, I hate Go error management style ;-) |
+| Custom Resource are fully typed | |
+| Development loop with IDE support, local testing, CI/CD | |
+| Very fine grained control on reconciliation loop | |
+| Optimized for few resources (CPU, memory) | |
 
 ## OLM manifests, Bundles and Scorecard
 
@@ -237,3 +252,7 @@ INFO[0002] All validation tests have completed successfully
 ```
 
 ## Operators Registry and Catalog
+
+The very last part of this sample/tutorials projets is on the topic of easily distributing your Operator to customers, partners through the concept of market place as we have in OpenShift ;-)
+
+For this, just have a look at the [Fruits Catalog Registry](./fruits-catalog-registry/README.md).

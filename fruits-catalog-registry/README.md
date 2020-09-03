@@ -24,10 +24,11 @@ $ operator-courier -v
 
 ### Build an Operator Registry
 
-
 #### Option 1: Build a registry from Manifests
 
-The [operator-registry](https://github.com/operator-framework/operator-registry) project defines a format for storing sets of operators and exposing them to make them available on a cluster. To create a catalog that includes your package, simply build a container image that uses the `upstream-registry-builder` tool to generate a registry and serve it. For example, create a file in the root of your project called `registry.Dockerfile`.
+The [operator-registry](https://github.com/operator-framework/operator-registry) project defines a format for storing sets of operators and exposing them to make them available on a cluster. So first, gather and organize your manifests as we did into the `manifests/` folder of this project.
+
+To create a catalog that includes your package, simply build a container image that uses the `upstream-registry-builder` tool to generate a registry and serve it. For example, create a file in the root of your project called `registry.Dockerfile`.
 
 Then just use your favorite container tooling to build the container image and push it to a registry:
 
@@ -44,12 +45,138 @@ The command to execute can be simply found into `registry-from-bundes.sh` script
 
 #### Option 3: Reuse Quay.io internal registry
 
+This option is only suitable if you want to publically expose your Openrator Catalog. Note that is does not prevent you for charging the Operator usage. Once it is deployed on a cluster, it could rely on an activation key or something to actually do the job ;-)/
+
+First thing will be to retrieve all the manifests from your Operator and put them into a `bundles/` folder like we did in this project.
+
+Then you'll have to retrieve an authentication token from Quay.io. For this, we have provided the utility script `gen-quay-auth-token.sh`. Once you got your token, just call the following command to upload your manifests to Quay.io.
+
 ```
-$ operator-courier push bundles lbroudoux fruits-catalog-operators 0.0.1 "basic bGJyb3Vkb3V4OkJsYWNrUmVkTGlnaHQ3Mg=="
+$ operator-courier push bundles lbroudoux fruits-catalog-operators 0.0.1 "<my-token-from-quay-io>"
 ```
+
+After few seconds and refreshing your Quay.io page if it's the fritsd time you're deploying an Application, you should have access to something like this:
+
+![Quay.io](../assets/fruits-catalog-operators-quay-application.png)
+
 
 ### Deploy your catalog on Kubernetes
 
 #### Option 1: Deploy a CatalogSource
 
+This option is suitable if you have built your Operator registry using option 1 or option 2 or previous step. Just deploy a new `CatalogSource` like the one below into the `openshift-marketplace` project: 
+
+```yaml
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: fruits-catalog-operators
+spec:
+  sourceType: grpc
+  image: quay.io/lbroudoux/fruits-catalog-operators-registry:1.0.0
+  displayName: Fruits Catalog Operators
+  publisher: Fruits Catalog Team
+
+```
+
+Here is the command:
+
+```
+$ oc create -f fruits-catalog-operators-catalog-source.yml -n openshift-marketplace
+```
+
+After a few seconds, the OperatorHub of OpenShift should be enriched with a new Provider like your see below:
+
+![Operator Hub](../assets/fruits-catalog-operator-catalog.png)
+
+You can check on the cluster:
+
+```
+oc get catalogsources -n openshift-marketplace                                                [12:17:35]
+NAME                           DISPLAY                    TYPE   PUBLISHER             AGE
+certified-operators            Certified Operators        grpc   Red Hat               9d
+community-operators            Community Operators        grpc   Red Hat               9d
+fruits-catalog-operators       Fruits Catalog Operators   grpc   Fruits Catalog Team   3d
+redhat-marketplace             Red Hat Marketplace        grpc   Red Hat               9d
+redhat-operators               Red Hat Operators          grpc   Red Hat               9d
+```
+
+`CatalogSource` implies the execution of a new `Pod` that serves Operator bundle locally:
+
+```
+oc get pods -n openshift-marketplace                                                          
+NAME                                            READY   STATUS    RESTARTS   AGE
+certified-operators-66bf4f46ff-mzdcn            1/1     Running   0          3d3h
+community-operators-7d85cb9886-gxkrp            1/1     Running   0          3d3h
+fruits-catalog-operators-qbpjk                  1/1     Running   0          3d
+marketplace-operator-df484cccc-pm2md            1/1     Running   0          9d
+redhat-marketplace-85dd977dc-x2fb4              1/1     Running   0          3d3h
+redhat-operators-7d8bb48cf9-nlhd7               1/1     Running   0          3d3h
+```
+
+In order to easily upgrade the distributed Operator metadatas, you may find to add an `updateStrategy` to your `CatalogSource` like this:
+
+```yaml
+[...]
+spec:
+  image: quay.io/lbroudoux/fruits-catalog-operators-registry:latest
+  updateStrategy:
+    registryPoll: 
+      interval: 30m
+[...]
+```
+
 #### Option 2: Deploy an OperatorSource
+
+This option is suitable if you have built your Operator registry using option 3 and if your application has been made `public` on Quay.io. Just deploy a new `OperatorSource` like the one below into the `openshift-marketplace` project: 
+
+```yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorSource
+metadata:
+  name: fruits-catalog-operators-cnr
+spec:
+  authorizationToken: {}
+  displayName: Fruits Catalog Operators
+  endpoint: 'https://quay.io/cnr'
+  publisher: Fruits Catalog Team
+  registryNamespace: lbroudoux
+  type: appregistry
+```
+
+Here is the command:
+
+```
+$ oc create -f fruits-catalog-operators.yml -n openshift-marketplace
+```
+
+After a few seconds, the OperatorHub of OpenShift should be enriched with a new Provider like your see below:
+
+![Operator Hub](../assets/fruits-catalog-operator-catalog-cnr.png)
+
+```
+$ oc get catalogsources -n openshift-marketplace                                                [12:17:35]
+NAME                           DISPLAY                    TYPE   PUBLISHER             AGE
+certified-operators            Certified Operators        grpc   Red Hat               9d
+community-operators            Community Operators        grpc   Red Hat               9d
+fruits-catalog-operators       Fruits Catalog Operators   grpc   Fruits Catalog Team   3d
+fruits-catalog-operators-cnr   Fruits Catalog Operators   grpc   Fruits Catalog Team   2d1h
+redhat-marketplace             Red Hat Marketplace        grpc   Red Hat               9d
+redhat-operators               Red Hat Operators          grpc   Red Hat               9d
+```
+
+While this approach may seems at first easier, it has some drawbacks:
+* New `OperatorSource` implies new deployments on cluster, 
+* Local deployment is mirroring Quay.io so if Quay.io is out-of-sight it should also be mirrored,
+* This is not as a fined grained as the previous approach because here you're referencing a whole `registryNamespace` and not a precise container image version...
+
+```
+$ oc get deployments -n openshift-marketplace                                                  
+NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+certified-operators            1/1     1            1           9d
+community-operators            1/1     1            1           9d
+fruits-catalog-operators-cnr   1/1     1            1           2d1h
+marketplace-operator           1/1     1            1           9d
+redhat-marketplace             1/1     1            1           9d
+redhat-operators               1/1     1            1           9d
+```
