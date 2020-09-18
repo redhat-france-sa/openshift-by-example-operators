@@ -92,7 +92,7 @@ After a few seconds, the OperatorHub of OpenShift should be enriched with a new 
 You can check on the cluster:
 
 ```
-oc get catalogsources -n openshift-marketplace                                                [12:17:35]
+$ oc get catalogsources -n openshift-marketplace
 NAME                           DISPLAY                    TYPE   PUBLISHER             AGE
 certified-operators            Certified Operators        grpc   Red Hat               9d
 community-operators            Community Operators        grpc   Red Hat               9d
@@ -104,7 +104,7 @@ redhat-operators               Red Hat Operators          grpc   Red Hat        
 `CatalogSource` implies the execution of a new `Pod` that serves Operator bundle locally:
 
 ```
-oc get pods -n openshift-marketplace                                                          
+$ oc get pods -n openshift-marketplace                                                          
 NAME                                            READY   STATUS    RESTARTS   AGE
 certified-operators-66bf4f46ff-mzdcn            1/1     Running   0          3d3h
 community-operators-7d85cb9886-gxkrp            1/1     Running   0          3d3h
