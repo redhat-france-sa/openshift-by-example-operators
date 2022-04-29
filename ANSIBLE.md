@@ -112,7 +112,7 @@ $ mkdir fruits-catalog-ansible-operator && cd fruits-catalog-ansible-operator
 $ operator-sdk new fruits-catalog-ansible-operator --api-version=redhat.com/v1alpha1 --kind=FruitsCatalogA --type=ansible
 ```
 
-### Competing the operator code
+### Completing the operator code
 
 Check the completed resources within the [`fruits-catalog-ansible-operator-0.19.2`](./fruits-catalog-ansible-operator-0.19.2) folder of this Git repository.
 
